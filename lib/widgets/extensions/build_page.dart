@@ -561,4 +561,8 @@ class _BuildPageState extends State<BuildPage> {
   }
   
   /// 获取平台显示名称
-  String _getPlatformDisplayName(String platform)
+  String _getPlatformDisplayName(String platform) {
+    switch (platform) {
+      case 'windows':
+        return 'Windows';
+      case 'linux':
