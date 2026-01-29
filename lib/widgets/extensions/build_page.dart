@@ -533,3 +533,8 @@ class _BuildPageState extends State<BuildPage> {
           ),
         ),
       ),
+    );
+  }
+  
+  /// 构建结果项
+  Widget _
