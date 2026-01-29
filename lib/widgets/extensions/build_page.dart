@@ -506,4 +506,9 @@ class _BuildPageState extends State<BuildPage> {
                           if (_buildResult!.outputPath != null)
                             _buildResultItem('输出路径:', _buildResult!.outputPath!),
                           if (_buildResult!.builtFiles.isNotEmpty)
-                            _buildResultItem('生成文件:', '${_
+                            _buildResultItem('生成文件:', '${_buildResult!.builtFiles.length}个'),
+                          _buildResultItem('构建耗时:', '${_buildResult!.buildDuration.inSeconds}秒'),
+                          if (_buildResult!.warnings.isNotEmpty)
+                            _buildResultItem('警告数量:', '${_buildResult!.warnings.length}个'),
+                        ] else ...[
+                          if (_build
