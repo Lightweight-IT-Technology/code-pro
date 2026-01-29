@@ -511,4 +511,9 @@ class _BuildPageState extends State<BuildPage> {
                           if (_buildResult!.warnings.isNotEmpty)
                             _buildResultItem('警告数量:', '${_buildResult!.warnings.length}个'),
                         ] else ...[
-                          if (_build
+                          if (_buildResult!.errors.isNotEmpty)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: _buildResult!.errors.map((error) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(vertical:
