@@ -516,4 +516,7 @@ class _BuildPageState extends State<BuildPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: _buildResult!.errors.map((error) {
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical:
+                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                  child: Text('• $error', style: const TextStyle(color: Colors.red)),
+                                );
+                              }).to
