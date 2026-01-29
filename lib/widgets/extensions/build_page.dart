@@ -552,3 +552,13 @@ class _BuildPageState extends State<BuildPage> {
             child: Text(
               value,
               style: const TextStyle(fontSize: 14),
+              softWrap: true,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  /// 获取平台显示名称
+  String _getPlatformDisplayName(String platform)
