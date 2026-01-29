@@ -539,4 +539,6 @@ class _BuildPageState extends State<BuildPage> {
   /// 构建结果项
   Widget _buildResultItem(String label, String value) {
     return Padding(
-      padding: const
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment:
