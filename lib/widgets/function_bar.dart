@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -8,11 +7,13 @@ import 'settings_dialog.dart';
 class FunctionBar extends StatelessWidget {
   final double width;
   final VoidCallback onToggleFileBar;
+  final VoidCallback onToggleExtensionBar;
 
   const FunctionBar({
     super.key,
     this.width = 60,
     required this.onToggleFileBar,
+    required this.onToggleExtensionBar,
   });
 
   @override
@@ -29,7 +30,7 @@ class FunctionBar extends StatelessWidget {
         children: [
           // 顶部留白
           const SizedBox(height: 16),
-          
+
           // 功能按钮区域
           Expanded(
             child: Column(
@@ -37,19 +38,22 @@ class FunctionBar extends StatelessWidget {
               children: [
                 // 这里可以添加其他功能按钮
                 // 例如：搜索、书签、调试等
-                
+
                 // 占位符，为未来功能预留空间
                 const SizedBox(height: 32),
-                
+
                 // 文件栏显示/隐藏控制按钮
                 _buildFileBarToggleButton(context),
-                
+
+                // 拓展栏显示/隐藏控制按钮
+                _buildExtensionBarToggleButton(context),
+
                 // 占位符，确保按钮均匀分布
                 const Expanded(child: SizedBox()),
-                
+
                 // 设置按钮
                 _buildSettingsButton(context),
-                
+
                 // 退出按钮
                 _buildExitButton(context),
               ],
@@ -67,9 +71,33 @@ class FunctionBar extends StatelessWidget {
           icon: Icon(
             appState.isFileBarVisible ? Icons.folder_open : Icons.folder,
             size: 24,
+            color: appState.isFileBarVisible
+                ? Theme.of(context).colorScheme.primary
+                : null,
           ),
           onPressed: onToggleFileBar,
           tooltip: appState.isFileBarVisible ? '隐藏文件栏' : '显示文件栏',
+          padding: const EdgeInsets.all(12),
+        );
+      },
+    );
+  }
+
+  Widget _buildExtensionBarToggleButton(BuildContext context) {
+    return Consumer<AppStateProvider>(
+      builder: (context, appState, child) {
+        return IconButton(
+          icon: Icon(
+            appState.isExtensionBarVisible
+                ? Icons.extension
+                : Icons.extension_outlined,
+            size: 24,
+            color: appState.isExtensionBarVisible
+                ? Theme.of(context).colorScheme.primary
+                : null,
+          ),
+          onPressed: onToggleExtensionBar,
+          tooltip: appState.isExtensionBarVisible ? '隐藏拓展栏' : '显示拓展栏',
           padding: const EdgeInsets.all(12),
         );
       },
@@ -95,10 +123,7 @@ class FunctionBar extends StatelessWidget {
   }
 
   void _openSettings(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const SettingsDialog(),
-    );
+    showDialog(context: context, builder: (context) => const SettingsDialog());
   }
 
   void _exitApp(BuildContext context) {

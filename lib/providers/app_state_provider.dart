@@ -7,6 +7,7 @@ class AppStateProvider with ChangeNotifier {
   List<FileModel> _files = [];
   EditorState? _currentEditorState;
   bool _isFileBarVisible = true; // 默认显示文件栏
+  bool _isExtensionBarVisible = false; // 默认隐藏拓展栏
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -14,6 +15,7 @@ class AppStateProvider with ChangeNotifier {
   List<FileModel> get files => _files;
   EditorState? get currentEditorState => _currentEditorState;
   bool get isFileBarVisible => _isFileBarVisible;
+  bool get isExtensionBarVisible => _isExtensionBarVisible;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -34,6 +36,19 @@ class AppStateProvider with ChangeNotifier {
 
   void setFileBarVisible(bool visible) {
     _isFileBarVisible = visible;
+    // 如果显示文件栏，则隐藏拓展栏
+    if (visible) {
+      _isExtensionBarVisible = false;
+    }
+    notifyListeners();
+  }
+
+  void setExtensionBarVisible(bool visible) {
+    _isExtensionBarVisible = visible;
+    // 如果显示拓展栏，则隐藏文件栏
+    if (visible) {
+      _isFileBarVisible = false;
+    }
     notifyListeners();
   }
 

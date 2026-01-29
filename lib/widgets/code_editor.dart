@@ -2,30 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:code_text_field/code_text_field.dart';
-import 'package:highlight/highlight.dart' show Mode;
-import 'package:highlight/languages/dart.dart';
-import 'package:highlight/languages/java.dart';
-import 'package:highlight/languages/python.dart';
-import 'package:highlight/languages/javascript.dart';
-import 'package:highlight/languages/typescript.dart';
-import 'package:highlight/languages/css.dart';
-import 'package:highlight/languages/json.dart';
-import 'package:highlight/languages/yaml.dart';
-import 'package:highlight/languages/markdown.dart';
-import 'package:highlight/languages/cpp.dart';
-import 'package:highlight/languages/php.dart';
-import 'package:highlight/languages/ruby.dart';
-import 'package:highlight/languages/go.dart';
-import 'package:highlight/languages/rust.dart';
-import 'package:highlight/languages/sql.dart';
-import 'package:highlight/languages/bash.dart';
-import 'package:highlight/languages/kotlin.dart';
-import 'package:highlight/languages/swift.dart';
-import 'package:highlight/languages/cs.dart';
-import 'package:highlight/languages/dos.dart';
-import 'package:highlight/languages/powershell.dart';
-import 'package:highlight/languages/plaintext.dart';
-import 'package:highlight/languages/xml.dart';
 import '../providers/app_state_provider.dart';
 import '../services/syntax_service.dart';
 import '../services/file_service.dart';
@@ -52,11 +28,7 @@ class _CodeEditorState extends State<CodeEditor> {
   @override
   void initState() {
     super.initState();
-    _codeController = CodeController(
-      text: '',
-      language: dart,
-      stringMap: _getCodeTheme(),
-    );
+    _codeController = CodeController(text: '');
     _setupAutoSave();
     _setupFormatCheck();
   }
@@ -255,16 +227,11 @@ class _CodeEditorState extends State<CodeEditor> {
     if (editorState != null && editorState.filePath.isNotEmpty) {
       try {
         final content = await FileService.readFile(editorState.filePath);
-        final language = _getLanguageFromFileName(editorState.fileName);
 
         if (mounted) {
           setState(() {
             _codeController.dispose(); // 释放旧的控制器
-            _codeController = CodeController(
-              text: content,
-              language: language,
-              stringMap: _getCodeTheme(),
-            );
+            _codeController = CodeController(text: content);
             _isModified = false;
           });
 
@@ -280,109 +247,6 @@ class _CodeEditorState extends State<CodeEditor> {
         }
       }
     }
-  }
-
-  Mode _getLanguageFromFileName(String fileName) {
-    final language = SyntaxService.getLanguageFromFileName(fileName);
-
-    switch (language) {
-      case 'dart':
-        return dart;
-      case 'java':
-        return java;
-      case 'kotlin':
-        return kotlin;
-      case 'swift':
-        return swift;
-      case 'python':
-        return python;
-      case 'javascript':
-        return javascript;
-      case 'typescript':
-        return typescript;
-      case 'html':
-        return xml; // HTML使用XML语法高亮
-      case 'css':
-        return css;
-      case 'scss':
-        return css; // SCSS使用CSS语法高亮
-      case 'json':
-        return json;
-      case 'xml':
-        return xml;
-      case 'yaml':
-        return yaml;
-      case 'markdown':
-        return markdown;
-      case 'c':
-        return cpp; // C语言使用C++语法高亮
-      case 'cpp':
-        return cpp;
-      case 'csharp':
-        return cs; // C#使用cs.dart语法高亮
-      case 'php':
-        return php;
-      case 'ruby':
-        return ruby;
-      case 'go':
-        return go;
-      case 'rust':
-        return rust;
-      case 'sql':
-        return sql;
-      case 'bash':
-        return bash;
-      case 'batch':
-        return dos; // Batch使用dos.dart语法高亮
-      case 'powershell':
-        return powershell;
-      case 'plaintext':
-        return plaintext;
-      default:
-        return plaintext; // 默认使用纯文本语法
-    }
-  }
-
-  Map<String, TextStyle> _getCodeTheme() {
-    return {
-      'root': const TextStyle(color: Color(0xFF000000)),
-      'comment': const TextStyle(color: Color(0xFF008000)),
-      'quote': const TextStyle(color: Color(0xFF008000)),
-      'keyword': const TextStyle(
-        color: Color(0xFF0000FF),
-        fontWeight: FontWeight.bold,
-      ),
-      'selector-tag': const TextStyle(
-        color: Color(0xFF0000FF),
-        fontWeight: FontWeight.bold,
-      ),
-      'built_in': const TextStyle(color: Color(0xFF0000FF)),
-      'name': const TextStyle(color: Color(0xFF0000FF)),
-      'type': const TextStyle(color: Color(0xFF0000FF)),
-      'literal': const TextStyle(color: Color(0xFF000080)),
-      'number': const TextStyle(color: Color(0xFF000080)),
-      'string': const TextStyle(color: Color(0xFF008000)),
-      'subst': const TextStyle(color: Color(0xFF000000)),
-      'regexp': const TextStyle(color: Color(0xFF008000)),
-      'link': const TextStyle(color: Color(0xFF008000)),
-      'function': const TextStyle(color: Color(0xFF0000FF)),
-      'title': const TextStyle(color: Color(0xFF0000FF)),
-      'attr': const TextStyle(color: Color(0xFF0000FF)),
-      'variable': const TextStyle(color: Color(0xFF000000)),
-      'template-variable': const TextStyle(color: Color(0xFF000000)),
-      'class-title': const TextStyle(color: Color(0xFF0000FF)),
-      'tag': const TextStyle(color: Color(0xFF000080)),
-      'meta': const TextStyle(color: Color(0xFF808080)),
-      'doctag': const TextStyle(color: Color(0xFF808080)),
-      'section': const TextStyle(color: Color(0xFF0000FF)),
-      'attribute': const TextStyle(color: Color(0xFF0000FF)),
-      'bullet': const TextStyle(color: Color(0xFF000080)),
-      'params': const TextStyle(color: Color(0xFF000000)),
-      'addition': const TextStyle(color: Color(0xFF008000)),
-      'deletion': const TextStyle(color: Color(0xFF800000)),
-      'emphasis': const TextStyle(fontStyle: FontStyle.italic),
-      'strong': const TextStyle(fontWeight: FontWeight.bold),
-    };
   }
 
   void _updateEditorState() {

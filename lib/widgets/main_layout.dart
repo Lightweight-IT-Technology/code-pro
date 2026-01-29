@@ -4,6 +4,7 @@ import '../providers/app_state_provider.dart';
 import 'file_bar.dart';
 import 'code_editor.dart';
 import 'function_bar.dart';
+import 'enhanced_extension_bar.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -38,10 +39,32 @@ class _MainLayoutState extends State<MainLayout> {
                 onToggleFileBar: () {
                   appState.setFileBarVisible(!appState.isFileBarVisible);
                 },
+                onToggleExtensionBar: () {
+                  appState.setExtensionBarVisible(
+                    !appState.isExtensionBarVisible,
+                  );
+                },
               ),
 
-              // 文件栏
-              if (shouldShowFileBar) _buildFileBar(appState, isLargeScreen),
+              // 文件栏（带动画效果）
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                switchInCurve: Curves.easeInOut,
+                switchOutCurve: Curves.easeInOut,
+                child: shouldShowFileBar
+                    ? _buildFileBar(appState, isLargeScreen)
+                    : const SizedBox.shrink(),
+              ),
+
+              // 拓展栏（带动画效果）
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                switchInCurve: Curves.easeInOut,
+                switchOutCurve: Curves.easeInOut,
+                child: appState.isExtensionBarVisible
+                    ? _buildExtensionBar(appState, isLargeScreen)
+                    : const SizedBox.shrink(),
+              ),
 
               // 编辑器区域
               Expanded(
@@ -157,6 +180,59 @@ class _MainLayoutState extends State<MainLayout> {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildExtensionBar(AppStateProvider appState, bool isLargeScreen) {
+    return AnimatedContainer(
+      key: const ValueKey('extension_bar'),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      width: _fileBarWidth,
+      child: Stack(
+        children: [
+          // 增强版拓展栏内容
+          EnhancedExtensionBar(
+            width: _fileBarWidth,
+            minWidth: _minFileBarWidth,
+            maxWidth: _maxFileBarWidth,
+          ),
+
+          // 调整大小手柄（仅在大屏幕上显示）
+          if (isLargeScreen)
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeLeftRight,
+                child: GestureDetector(
+                  onHorizontalDragUpdate: (details) {
+                    setState(() {
+                      _fileBarWidth = (_fileBarWidth - details.delta.dx).clamp(
+                        _minFileBarWidth,
+                        _maxFileBarWidth,
+                      );
+                    });
+                  },
+                  child: Container(width: 8, color: Colors.transparent),
+                ),
+              ),
+            ),
+
+          // 关闭按钮（仅在小屏幕上显示）
+          if (!isLargeScreen)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: IconButton(
+                icon: const Icon(Icons.close, size: 20),
+                onPressed: () => appState.setExtensionBarVisible(false),
+                tooltip: '关闭拓展栏',
+              ),
+            ),
+        ],
       ),
     );
   }
