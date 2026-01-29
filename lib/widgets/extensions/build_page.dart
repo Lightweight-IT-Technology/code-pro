@@ -571,4 +571,26 @@ class _BuildPageState extends State<BuildPage> {
         return 'macOS';
       case 'web':
         return 'Web';
-      case '
+      case 'android':
+        return 'Android';
+      case 'ios':
+        return 'iOS';
+      default:
+        return platform;
+    }
+  }
+  
+  /// 获取模式显示名称
+  String _getModeDisplayName(String mode) {
+    switch (mode) {
+      case 'debug':
+        return '调试模式';
+      case 'profile':
+        return '性能模式';
+      case 'release':
+        return '发布模式';
+      default:
+        return mode;
+    }
+  }
+}
