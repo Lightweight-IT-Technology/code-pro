@@ -545,4 +545,4 @@ class _BuildPageState extends State<BuildPage> {
         children: [
           Text(
             label,
-            style: const TextStyle(fontWeight: FontWeight
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
