@@ -568,4 +568,7 @@ class _BuildPageState extends State<BuildPage> {
       case 'linux':
         return 'Linux';
       case 'macos':
-        return 'macOS
+        return 'macOS';
+      case 'web':
+        return 'Web';
+      case '
