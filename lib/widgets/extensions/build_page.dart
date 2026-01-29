@@ -519,4 +519,13 @@ class _BuildPageState extends State<BuildPage> {
                                   padding: const EdgeInsets.symmetric(vertical: 2),
                                   child: Text('• $error', style: const TextStyle(color: Colors.red)),
                                 );
-                              }).to
+                              }).toList(),
+                            ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              
+              const SizedBox(height:
