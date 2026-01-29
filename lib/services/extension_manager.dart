@@ -46,11 +46,12 @@ class ExtensionManager {
     // 开发工具类拓展
     _registerExtension(ApiTestExtension());
     _registerExtension(TerminalExtension());
+    _registerExtension(PluginCreatorExtension());
+    _registerExtension(PluginBuilderExtension());
 
     // 系统工具类拓展
     _registerExtension(FileCompareExtension());
     _registerExtension(DatabaseManagerExtension());
-    _registerExtension(PluginCreatorExtension());
   }
 
   /// 注册拓展
