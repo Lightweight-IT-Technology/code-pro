@@ -528,4 +528,8 @@ class _BuildPageState extends State<BuildPage> {
                 ),
               ],
               
-              const SizedBox(height:
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
