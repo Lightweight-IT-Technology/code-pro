@@ -546,3 +546,9 @@ class _BuildPageState extends State<BuildPage> {
           Text(
             label,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 14),
