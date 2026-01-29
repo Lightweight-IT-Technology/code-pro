@@ -16,16 +16,32 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
   String _selectedCategory = '通用';
   bool _isEditing = false;
   int _editingIndex = -1;
-  
+
   final List<String> _languages = [
-    'dart', 'javascript', 'typescript', 'python', 'java', 
-    'cpp', 'csharp', 'html', 'css', 'sql', 'json', 'xml'
+    'dart',
+    'javascript',
+    'typescript',
+    'python',
+    'java',
+    'cpp',
+    'csharp',
+    'html',
+    'css',
+    'sql',
+    'json',
+    'xml',
   ];
-  
+
   final List<String> _categories = [
-    '通用', '函数', '类', '算法', '数据结构', '工具函数', '模板'
+    '通用',
+    '函数',
+    '类',
+    '算法',
+    '数据结构',
+    '工具函数',
+    '模板',
   ];
-  
+
   List<CodeSnippet> _snippets = [
     CodeSnippet(
       name: 'Hello World',
@@ -40,7 +56,8 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
       description: '快速排序算法实现',
       language: 'dart',
       category: '算法',
-      code: 'void quickSort(List<int> arr, int low, int high) {\n  if (low < high) {\n    int pi = _partition(arr, low, high);\n    quickSort(arr, low, pi - 1);\n    quickSort(arr, pi + 1, high);\n  }\n}',
+      code:
+          'void quickSort(List<int> arr, int low, int high) {\n  if (low < high) {\n    int pi = _partition(arr, low, high);\n    quickSort(arr, low, pi - 1);\n    quickSort(arr, pi + 1, high);\n  }\n}',
       tags: ['排序', '算法'],
     ),
     CodeSnippet(
@@ -48,32 +65,36 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
       description: '简单的HTTP GET请求',
       language: 'dart',
       category: '工具函数',
-      code: 'Future<String> fetchData(String url) async {\n  final response = await http.get(Uri.parse(url));\n  if (response.statusCode == 200) {\n    return response.body;\n  } else {\n    throw Exception("请求失败");\n  }\n}',
+      code:
+          'Future<String> fetchData(String url) async {\n  final response = await http.get(Uri.parse(url));\n  if (response.statusCode == 200) {\n    return response.body;\n  } else {\n    throw Exception("请求失败");\n  }\n}',
       tags: ['网络', 'HTTP'],
     ),
   ];
-  
+
   List<CodeSnippet> get _filteredSnippets {
     final query = _searchController.text.toLowerCase();
     if (query.isEmpty) return _snippets;
-    
-    return _snippets.where((snippet) =>
-      snippet.name.toLowerCase().contains(query) ||
-      snippet.description.toLowerCase().contains(query) ||
-      snippet.language.toLowerCase().contains(query) ||
-      snippet.category.toLowerCase().contains(query) ||
-      snippet.tags.any((tag) => tag.toLowerCase().contains(query))
-    ).toList();
+
+    return _snippets
+        .where(
+          (snippet) =>
+              snippet.name.toLowerCase().contains(query) ||
+              snippet.description.toLowerCase().contains(query) ||
+              snippet.language.toLowerCase().contains(query) ||
+              snippet.category.toLowerCase().contains(query) ||
+              snippet.tags.any((tag) => tag.toLowerCase().contains(query)),
+        )
+        .toList();
   }
 
   void _addSnippet() {
     if (_nameController.text.isEmpty || _codeController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请填写名称和代码')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请填写名称和代码')));
       return;
     }
-    
+
     final snippet = CodeSnippet(
       name: _nameController.text,
       description: _descriptionController.text,
@@ -82,7 +103,7 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
       code: _codeController.text,
       tags: _extractTags(_codeController.text),
     );
-    
+
     setState(() {
       if (_isEditing) {
         _snippets[_editingIndex] = snippet;
@@ -91,10 +112,10 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
       }
       _resetForm();
     });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_isEditing ? '片段已更新' : '片段已添加')),
-    );
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(_isEditing ? '片段已更新' : '片段已添加')));
   }
 
   void _editSnippet(int index) {
@@ -127,9 +148,9 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
                 _snippets.removeAt(index);
               });
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('片段已删除')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('片段已删除')));
             },
             child: const Text('删除'),
           ),
@@ -152,14 +173,22 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
 
   List<String> _extractTags(String code) {
     // 简单的关键词提取
-    final keywords = ['class', 'function', 'async', 'await', 'if', 'for', 'while'];
+    final keywords = [
+      'class',
+      'function',
+      'async',
+      'await',
+      'if',
+      'for',
+      'while',
+    ];
     return keywords.where((keyword) => code.contains(keyword)).toList();
   }
 
   void _copyToClipboard(String code) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('代码已复制到剪贴板')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('代码已复制到剪贴板')));
   }
 
   @override
@@ -201,7 +230,7 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
-                  
+
                   // 片段列表
                   Expanded(
                     child: ListView.builder(
@@ -216,7 +245,7 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
               ),
             ),
           ),
-          
+
           // 编辑区域
           Expanded(
             flex: 2,
@@ -230,7 +259,10 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
                     children: [
                       Text(
                         _isEditing ? '编辑片段' : '新建片段',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const Spacer(),
                       if (_isEditing)
@@ -240,9 +272,9 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
                         ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // 基本信息
                   Row(
                     children: [
@@ -267,9 +299,9 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // 语言和分类
                   Row(
                     children: [
@@ -312,11 +344,14 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // 代码编辑区域
-                  const Text('代码:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    '代码:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 8),
                   Expanded(
                     child: Container(
@@ -336,9 +371,9 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // 操作按钮
                   Row(
                     children: [
@@ -384,11 +419,17 @@ class _CodeSnippetPageState extends State<CodeSnippetPage> {
               spacing: 4,
               children: [
                 Chip(
-                  label: Text(snippet.language, style: const TextStyle(fontSize: 10)),
+                  label: Text(
+                    snippet.language,
+                    style: const TextStyle(fontSize: 10),
+                  ),
                   visualDensity: VisualDensity.compact,
                 ),
                 Chip(
-                  label: Text(snippet.category, style: const TextStyle(fontSize: 10)),
+                  label: Text(
+                    snippet.category,
+                    style: const TextStyle(fontSize: 10),
+                  ),
                   visualDensity: VisualDensity.compact,
                 ),
               ],

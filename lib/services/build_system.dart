@@ -77,7 +77,14 @@ class BuildConfig {
     if (buildMode.isEmpty) errors.add('构建模式不能为空');
 
     // 验证目标平台
-    final supportedPlatforms = ['windows', 'linux', 'macos', 'web', 'android', 'ios'];
+    final supportedPlatforms = [
+      'windows',
+      'linux',
+      'macos',
+      'web',
+      'android',
+      'ios',
+    ];
     if (!supportedPlatforms.contains(targetPlatform)) {
       errors.add('不支持的目标平台: $targetPlatform');
     }
@@ -200,8 +207,8 @@ class BuildEngine {
       }
 
       // 执行构建步骤
-      final buildSteps = config.buildSteps.isNotEmpty 
-          ? config.buildSteps 
+      final buildSteps = config.buildSteps.isNotEmpty
+          ? config.buildSteps
           : _getDefaultBuildSteps(config);
 
       for (final step in buildSteps) {
@@ -227,7 +234,6 @@ class BuildEngine {
         buildDuration: stopwatch.elapsed,
         buildTime: buildTime,
       );
-
     } catch (e) {
       stopwatch.stop();
       return BuildResult(
@@ -242,7 +248,7 @@ class BuildEngine {
   /// 获取默认构建步骤
   static List<String> _getDefaultBuildSteps(BuildConfig config) {
     final steps = <String>[];
-    
+
     // 根据目标平台和构建模式生成构建步骤
     switch (config.targetPlatform) {
       case 'windows':
@@ -323,7 +329,9 @@ class BuildEngine {
         final outputLines = stdout.split('\n');
         for (final line in outputLines) {
           if (line.contains('Built') || line.contains('Generated')) {
-            final fileMatch = RegExp(r'([\w\\/.-]+\.(exe|apk|app|dart|js|html))').firstMatch(line);
+            final fileMatch = RegExp(
+              r'([\w\\/.-]+\.(exe|apk|app|dart|js|html))',
+            ).firstMatch(line);
             if (fileMatch != null) {
               builtFiles.add(fileMatch.group(1)!);
             }
@@ -340,7 +348,6 @@ class BuildEngine {
         warnings: warnings,
         errors: errors,
       );
-
     } catch (e) {
       return BuildStepResult(
         success: false,
@@ -350,7 +357,9 @@ class BuildEngine {
   }
 
   /// 验证项目结构
-  static Future<List<String>> validateProjectStructure(String projectPath) async {
+  static Future<List<String>> validateProjectStructure(
+    String projectPath,
+  ) async {
     final errors = <String>[];
     final dir = Directory(projectPath);
 
@@ -360,11 +369,7 @@ class BuildEngine {
     }
 
     // 检查必需文件
-    final requiredFiles = [
-      'pubspec.yaml',
-      'lib/main.dart',
-      'manifest.json',
-    ];
+    final requiredFiles = ['pubspec.yaml', 'lib/main.dart', 'manifest.json'];
 
     for (final file in requiredFiles) {
       final filePath = path.join(projectPath, file);

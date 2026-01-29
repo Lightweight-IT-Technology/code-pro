@@ -12,27 +12,36 @@ class BuildPage extends StatefulWidget {
 
 class _BuildPageState extends State<BuildPage> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // 构建配置字段
   final TextEditingController _projectPathController = TextEditingController();
   final TextEditingController _outputPathController = TextEditingController();
-  final TextEditingController _configNameController = TextEditingController(text: 'default');
-  
+  final TextEditingController _configNameController = TextEditingController(
+    text: 'default',
+  );
+
   // 构建选项
   String _selectedPlatform = 'windows';
   String _selectedMode = 'release';
   String _projectPath = '';
   String _outputPath = '';
   bool _isBuilding = false;
-  
+
   // 构建结果
   BuildResult? _buildResult;
   List<String> _buildLogs = [];
-  
+
   // 支持的平台和模式
-  final List<String> _platforms = ['windows', 'linux', 'macos', 'web', 'android', 'ios'];
+  final List<String> _platforms = [
+    'windows',
+    'linux',
+    'macos',
+    'web',
+    'android',
+    'ios',
+  ];
   final List<String> _modes = ['debug', 'profile', 'release'];
-  
+
   @override
   void dispose() {
     _projectPathController.dispose();
@@ -40,14 +49,13 @@ class _BuildPageState extends State<BuildPage> {
     _configNameController.dispose();
     super.dispose();
   }
-  
+
   /// 选择项目目录
   Future<void> _selectProjectDirectory() async {
     try {
-      final String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
-        dialogTitle: '选择插件项目目录',
-      );
-      
+      final String? selectedDirectory = await FilePicker.platform
+          .getDirectoryPath(dialogTitle: '选择插件项目目录');
+
       if (selectedDirectory != null) {
         setState(() {
           _projectPath = selectedDirectory;
@@ -55,7 +63,7 @@ class _BuildPageState extends State<BuildPage> {
           _outputPath = path.join(selectedDirectory, 'build');
           _outputPathController.text = _outputPath;
         });
-        
+
         // 验证项目结构
         await _validateProjectStructure();
       }
@@ -63,14 +71,13 @@ class _BuildPageState extends State<BuildPage> {
       _showError('选择目录时发生错误: $e');
     }
   }
-  
+
   /// 选择输出目录
   Future<void> _selectOutputDirectory() async {
     try {
-      final String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
-        dialogTitle: '选择构建输出目录',
-      );
-      
+      final String? selectedDirectory = await FilePicker.platform
+          .getDirectoryPath(dialogTitle: '选择构建输出目录');
+
       if (selectedDirectory != null) {
         setState(() {
           _outputPath = selectedDirectory;
@@ -81,11 +88,11 @@ class _BuildPageState extends State<BuildPage> {
       _showError('选择目录时发生错误: $e');
     }
   }
-  
+
   /// 验证项目结构
   Future<void> _validateProjectStructure() async {
     if (_projectPath.isEmpty) return;
-    
+
     final errors = await BuildEngine.validateProjectStructure(_projectPath);
     if (errors.isNotEmpty) {
       _showWarning('项目结构验证发现以下问题:\n${errors.join("\n")}');
@@ -93,24 +100,24 @@ class _BuildPageState extends State<BuildPage> {
       _showSuccess('项目结构验证通过');
     }
   }
-  
+
   /// 执行构建
   Future<void> _executeBuild() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     if (_projectPath.isEmpty) {
       _showError('请选择项目目录');
       return;
     }
-    
+
     setState(() {
       _isBuilding = true;
       _buildResult = null;
       _buildLogs.clear();
     });
-    
+
     try {
       // 创建构建配置
       final config = BuildConfig(
@@ -120,27 +127,27 @@ class _BuildPageState extends State<BuildPage> {
         targetPlatform: _selectedPlatform,
         buildMode: _selectedMode,
       );
-      
+
       // 添加构建配置到管理器
       BuildManager().addBuildConfig(config.name, config);
-      
+
       // 执行构建
       _addLog('开始构建插件项目...');
       _addLog('项目路径: $_projectPath');
       _addLog('目标平台: $_selectedPlatform');
       _addLog('构建模式: $_selectedMode');
-      
+
       final result = await BuildManager().executeBuild(
         projectPath: _projectPath,
         configName: config.name,
         outputPath: _outputPath,
       );
-      
+
       setState(() {
         _buildResult = result;
         _isBuilding = false;
       });
-      
+
       // 记录构建结果
       if (result.success) {
         _addLog('构建成功!');
@@ -161,7 +168,6 @@ class _BuildPageState extends State<BuildPage> {
         }
         _showError('构建失败: ${result.errors.join("\n")}');
       }
-      
     } catch (e) {
       setState(() {
         _isBuilding = false;
@@ -170,14 +176,14 @@ class _BuildPageState extends State<BuildPage> {
       _showError('构建过程中发生错误: $e');
     }
   }
-  
+
   /// 添加日志
   void _addLog(String message) {
     setState(() {
       _buildLogs.add('${DateTime.now().toString().substring(11, 19)} $message');
     });
   }
-  
+
   /// 显示成功消息
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -188,7 +194,7 @@ class _BuildPageState extends State<BuildPage> {
       ),
     );
   }
-  
+
   /// 显示警告消息
   void _showWarning(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -199,7 +205,7 @@ class _BuildPageState extends State<BuildPage> {
       ),
     );
   }
-  
+
   /// 显示错误消息
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -210,7 +216,7 @@ class _BuildPageState extends State<BuildPage> {
       ),
     );
   }
-  
+
   /// 重置表单
   void _resetForm() {
     _formKey.currentState?.reset();
@@ -226,7 +232,7 @@ class _BuildPageState extends State<BuildPage> {
       _buildLogs.clear();
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -256,10 +262,13 @@ class _BuildPageState extends State<BuildPage> {
                     children: [
                       const Text(
                         '项目配置',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // 项目路径
                       Row(
                         children: [
@@ -287,7 +296,7 @@ class _BuildPageState extends State<BuildPage> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // 输出路径
                       Row(
                         children: [
@@ -312,9 +321,9 @@ class _BuildPageState extends State<BuildPage> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // 构建配置
               Card(
                 child: Padding(
@@ -324,10 +333,13 @@ class _BuildPageState extends State<BuildPage> {
                     children: [
                       const Text(
                         '构建配置',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       Row(
                         children: [
                           // 配置名称
@@ -348,7 +360,7 @@ class _BuildPageState extends State<BuildPage> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          
+
                           // 目标平台
                           Expanded(
                             child: DropdownButtonFormField<String>(
@@ -360,7 +372,9 @@ class _BuildPageState extends State<BuildPage> {
                               items: _platforms.map((platform) {
                                 return DropdownMenuItem<String>(
                                   value: platform,
-                                  child: Text(_getPlatformDisplayName(platform)),
+                                  child: Text(
+                                    _getPlatformDisplayName(platform),
+                                  ),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -373,7 +387,7 @@ class _BuildPageState extends State<BuildPage> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          
+
                           // 构建模式
                           Expanded(
                             child: DropdownButtonFormField<String>(
@@ -403,16 +417,16 @@ class _BuildPageState extends State<BuildPage> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 构建按钮
               Center(
                 child: SizedBox(
                   width: 200,
                   child: ElevatedButton.icon(
                     onPressed: _isBuilding ? null : _executeBuild,
-                    icon: _isBuilding 
+                    icon: _isBuilding
                         ? const SizedBox(
                             width: 16,
                             height: 16,
@@ -426,7 +440,7 @@ class _BuildPageState extends State<BuildPage> {
                   ),
                 ),
               ),
-              
+
               // 构建日志
               if (_buildLogs.isNotEmpty) ...[
                 const SizedBox(height: 24),
@@ -438,10 +452,13 @@ class _BuildPageState extends State<BuildPage> {
                       children: [
                         const Text(
                           '构建日志',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 16),
-                        
+
                         Container(
                           height: 200,
                           padding: const EdgeInsets.all(8),
@@ -455,10 +472,15 @@ class _BuildPageState extends State<BuildPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: _buildLogs.map((log) {
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 2,
+                                  ),
                                   child: Text(
                                     log,
-                                    style: const TextStyle(fontFamily: 'Monospace', fontSize: 12),
+                                    style: const TextStyle(
+                                      fontFamily: 'Monospace',
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 );
                               }).toList(),
@@ -470,12 +492,14 @@ class _BuildPageState extends State<BuildPage> {
                   ),
                 ),
               ],
-              
+
               // 构建结果
               if (_buildResult != null) ...[
                 const SizedBox(height: 24),
                 Card(
-                  color: _buildResult!.success ? Colors.green.shade50 : Colors.red.shade50,
+                  color: _buildResult!.success
+                      ? Colors.green.shade50
+                      : Colors.red.shade50,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -484,8 +508,12 @@ class _BuildPageState extends State<BuildPage> {
                         Row(
                           children: [
                             Icon(
-                              _buildResult!.success ? Icons.check_circle : Icons.error,
-                              color: _buildResult!.success ? Colors.green : Colors.red,
+                              _buildResult!.success
+                                  ? Icons.check_circle
+                                  : Icons.error,
+                              color: _buildResult!.success
+                                  ? Colors.green
+                                  : Colors.red,
                             ),
                             const SizedBox(width: 8),
                             Text(
@@ -493,31 +521,50 @@ class _BuildPageState extends State<BuildPage> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: _buildResult!.success ? Colors.green : Colors.red,
+                                color: _buildResult!.success
+                                    ? Colors.green
+                                    : Colors.red,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        
+
                         if (_buildResult!.success) ...[
                           if (_buildResult!.buildPath != null)
                             _buildResultItem('项目路径:', _buildResult!.buildPath!),
                           if (_buildResult!.outputPath != null)
-                            _buildResultItem('输出路径:', _buildResult!.outputPath!),
+                            _buildResultItem(
+                              '输出路径:',
+                              _buildResult!.outputPath!,
+                            ),
                           if (_buildResult!.builtFiles.isNotEmpty)
-                            _buildResultItem('生成文件:', '${_buildResult!.builtFiles.length}个'),
-                          _buildResultItem('构建耗时:', '${_buildResult!.buildDuration.inSeconds}秒'),
+                            _buildResultItem(
+                              '生成文件:',
+                              '${_buildResult!.builtFiles.length}个',
+                            ),
+                          _buildResultItem(
+                            '构建耗时:',
+                            '${_buildResult!.buildDuration.inSeconds}秒',
+                          ),
                           if (_buildResult!.warnings.isNotEmpty)
-                            _buildResultItem('警告数量:', '${_buildResult!.warnings.length}个'),
+                            _buildResultItem(
+                              '警告数量:',
+                              '${_buildResult!.warnings.length}个',
+                            ),
                         ] else ...[
                           if (_buildResult!.errors.isNotEmpty)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: _buildResult!.errors.map((error) {
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 2),
-                                  child: Text('• $error', style: const TextStyle(color: Colors.red)),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 2,
+                                  ),
+                                  child: Text(
+                                    '• $error',
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
                                 );
                               }).toList(),
                             ),
@@ -527,7 +574,7 @@ class _BuildPageState extends State<BuildPage> {
                   ),
                 ),
               ],
-              
+
               const SizedBox(height: 32),
             ],
           ),
@@ -535,7 +582,7 @@ class _BuildPageState extends State<BuildPage> {
       ),
     );
   }
-  
+
   /// 构建结果项
   Widget _buildResultItem(String label, String value) {
     return Padding(
@@ -559,7 +606,7 @@ class _BuildPageState extends State<BuildPage> {
       ),
     );
   }
-  
+
   /// 获取平台显示名称
   String _getPlatformDisplayName(String platform) {
     switch (platform) {
@@ -579,7 +626,7 @@ class _BuildPageState extends State<BuildPage> {
         return platform;
     }
   }
-  
+
   /// 获取模式显示名称
   String _getModeDisplayName(String mode) {
     switch (mode) {

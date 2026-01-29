@@ -15,7 +15,7 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
     FileItem(name: 'script.py', newName: 'script.py'),
     FileItem(name: 'config.yaml', newName: 'config.yaml'),
   ];
-  
+
   String _pattern = '{name}';
   String _prefix = '';
   String _suffix = '';
@@ -28,18 +28,18 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
         final file = _files[i];
         final nameWithoutExt = file.name.replaceAll(RegExp(r'\.[^.]*\'), '');
         final extension = file.name.substring(file.name.lastIndexOf('.') + 1);
-        
+
         String newName = _pattern
             .replaceAll('{name}', nameWithoutExt)
             .replaceAll('{prefix}', _prefix)
             .replaceAll('{suffix}', _suffix)
             .replaceAll('{number}', (_startNumber + i).toString())
             .replaceAll('{ext}', extension);
-            
+
         if (_includeExtension) {
           newName += '.$extension';
         }
-        
+
         _files[i] = FileItem(name: file.name, newName: newName);
       }
     });
@@ -47,16 +47,16 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
 
   void _previewRename() {
     _applyRenamePattern();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('预览已更新')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('预览已更新')));
   }
 
   void _executeRename() {
     // 模拟重命名操作
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('批量重命名完成')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('批量重命名完成')));
   }
 
   @override
@@ -74,9 +74,15 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('重命名规则', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text(
+                      '重命名规则',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 16),
-                    
+
                     // 模式设置
                     TextField(
                       decoration: const InputDecoration(
@@ -87,10 +93,13 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                       onChanged: (value) => setState(() => _pattern = value),
                     ),
                     const SizedBox(height: 8),
-                    const Text('可用变量: {name}, {prefix}, {suffix}, {number}, {ext}', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                    
+                    const Text(
+                      '可用变量: {name}, {prefix}, {suffix}, {number}, {ext}',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+
                     const SizedBox(height: 16),
-                    
+
                     // 前缀后缀设置
                     Row(
                       children: [
@@ -100,7 +109,8 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                               labelText: '前缀',
                               border: OutlineInputBorder(),
                             ),
-                            onChanged: (value) => setState(() => _prefix = value),
+                            onChanged: (value) =>
+                                setState(() => _prefix = value),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -110,14 +120,15 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                               labelText: '后缀',
                               border: OutlineInputBorder(),
                             ),
-                            onChanged: (value) => setState(() => _suffix = value),
+                            onChanged: (value) =>
+                                setState(() => _suffix = value),
                           ),
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // 数字和扩展名设置
                     Row(
                       children: [
@@ -128,7 +139,9 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                               border: OutlineInputBorder(),
                             ),
                             keyboardType: TextInputType.number,
-                            onChanged: (value) => setState(() => _startNumber = int.tryParse(value) ?? 1),
+                            onChanged: (value) => setState(
+                              () => _startNumber = int.tryParse(value) ?? 1,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -136,14 +149,16 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                           child: CheckboxListTile(
                             title: const Text('包含扩展名'),
                             value: _includeExtension,
-                            onChanged: (value) => setState(() => _includeExtension = value ?? true),
+                            onChanged: (value) => setState(
+                              () => _includeExtension = value ?? true,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // 操作按钮
                     Row(
                       children: [
@@ -164,9 +179,9 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 文件列表
             Expanded(
               child: Card(
@@ -176,7 +191,13 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
                         children: [
-                          const Text('文件列表', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          const Text(
+                            '文件列表',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const Spacer(),
                           Text('共 ${_files.length} 个文件'),
                         ],
@@ -188,24 +209,32 @@ class _BatchRenamePageState extends State<BatchRenamePage> {
                         itemBuilder: (context, index) {
                           final file = _files[index];
                           final isChanged = file.name != file.newName;
-                          
+
                           return ListTile(
                             leading: const Icon(Icons.insert_drive_file),
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(file.name, style: TextStyle(
-                                  decoration: isChanged ? TextDecoration.lineThrough : null,
-                                  color: isChanged ? Colors.grey : null,
-                                )),
+                                Text(
+                                  file.name,
+                                  style: TextStyle(
+                                    decoration: isChanged
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                    color: isChanged ? Colors.grey : null,
+                                  ),
+                                ),
                                 if (isChanged)
-                                  Text(file.newName, style: const TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                                  Text(
+                                    file.newName,
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                               ],
                             ),
-                            trailing: isChanged 
+                            trailing: isChanged
                                 ? const Icon(Icons.check, color: Colors.green)
                                 : const Icon(Icons.close, color: Colors.grey),
                           );
