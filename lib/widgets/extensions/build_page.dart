@@ -537,4 +537,6 @@ class _BuildPageState extends State<BuildPage> {
   }
   
   /// 构建结果项
-  Widget _
+  Widget _buildResultItem(String label, String value) {
+    return Padding(
+      padding: const
