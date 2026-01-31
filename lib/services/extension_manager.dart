@@ -2,8 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../widgets/extensions/code_format_page.dart';
 import '../widgets/extensions/code_snippet_page.dart';
-import '../widgets/extensions/plugin_creator_page.dart';
-import '../widgets/extensions/build_page.dart';
 
 /// 拓展接口定义
 abstract class Extension {
@@ -46,8 +44,6 @@ class ExtensionManager {
     // 开发工具类拓展
     _registerExtension(ApiTestExtension());
     _registerExtension(TerminalExtension());
-    _registerExtension(PluginCreatorExtension());
-    _registerExtension(PluginBuilderExtension());
 
     // 系统工具类拓展
     _registerExtension(FileCompareExtension());
@@ -348,70 +344,6 @@ class DatabaseManagerExtension implements Extension {
     await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (context) => DatabaseManagerPage()));
-  }
-
-  @override
-  bool isAvailable() => true;
-}
-
-/// 插件创建器拓展
-class PluginCreatorExtension implements Extension {
-  @override
-  String get name => '插件创建器';
-
-  @override
-  String get description => '创建和管理自定义插件';
-
-  @override
-  String get version => '1.0.0';
-
-  @override
-  String get author => '系统内置';
-
-  @override
-  String get type => '开发工具';
-
-  @override
-  IconData get icon => Icons.extension;
-
-  @override
-  Future<void> execute(BuildContext context) async {
-    // 打开插件创建器界面
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const PluginCreatorPage()));
-  }
-
-  @override
-  bool isAvailable() => true;
-}
-
-/// 插件构建器拓展
-class PluginBuilderExtension implements Extension {
-  @override
-  String get name => '插件构建器';
-
-  @override
-  String get description => '构建和打包插件项目';
-
-  @override
-  String get version => '1.0.0';
-
-  @override
-  String get author => '系统内置';
-
-  @override
-  String get type => '开发工具';
-
-  @override
-  IconData get icon => Icons.build;
-
-  @override
-  Future<void> execute(BuildContext context) async {
-    // 打开插件构建器界面
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const BuildPage()));
   }
 
   @override

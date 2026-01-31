@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../providers/app_state_provider.dart';
 import '../services/extension_manager.dart';
-import 'extensions/plugin_creator_page.dart';
 
 class EnhancedExtensionBar extends StatefulWidget {
   final double width;
@@ -157,13 +156,6 @@ class _EnhancedExtensionBarState extends State<EnhancedExtensionBar> {
     }
   }
 
-  void _createExtension() {
-    // 打开插件创建器界面
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const PluginCreatorPage()));
-  }
-
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -244,22 +236,6 @@ class _EnhancedExtensionBarState extends State<EnhancedExtensionBar> {
                 foregroundColor: Theme.of(
                   context,
                 ).colorScheme.onPrimaryContainer,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: _createExtension,
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('创建拓展'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.secondaryContainer,
-                foregroundColor: Theme.of(
-                  context,
-                ).colorScheme.onSecondaryContainer,
               ),
             ),
           ),
