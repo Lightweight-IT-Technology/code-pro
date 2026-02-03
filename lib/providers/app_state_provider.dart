@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../models/file_model.dart';
 import '../models/editor_state.dart';
 
@@ -105,5 +106,34 @@ class AppStateProvider with ChangeNotifier {
       _files[index] = newFile;
       notifyListeners();
     }
+  }
+
+  void updateEditorContent(String content) {
+    if (_currentEditorState != null) {
+      // 这里应该更新编辑器内容，但具体实现取决于编辑器组件
+      // 目前我们只更新状态，实际内容更新由编辑器组件处理
+      notifyListeners();
+    }
+  }
+
+  void insertTextAtCursor(String text) {
+    if (_currentEditorState != null) {
+      // 这里应该实现在光标位置插入文本的逻辑
+      // 目前我们只通知监听器，实际插入由编辑器组件处理
+      notifyListeners();
+    }
+  }
+
+  void openFile(String filePath) {
+    // 这里应该实现打开文件的逻辑
+    // 目前我们只更新当前编辑器状态
+    setCurrentEditorState(
+      EditorState(
+        filePath: filePath,
+        fileName: filePath.split(Platform.pathSeparator).last,
+        isModified: false,
+        lastSaved: DateTime.now(),
+      ),
+    );
   }
 }

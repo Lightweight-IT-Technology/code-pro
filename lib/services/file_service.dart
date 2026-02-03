@@ -194,4 +194,121 @@ class FileService {
       throw Exception('Failed to select file: $e');
     }
   }
+
+  static Future<List<Map<String, dynamic>>> searchFiles({
+    required String directory,
+    required String searchPattern,
+    String filePattern = '*',
+    bool recursive = true,
+    bool caseSensitive = false,
+    bool matchWholeWord = false,
+    bool useRegex = false,
+    String searchType = 'content',
+  }) async {
+    try {
+      final results = <Map<String, dynamic>>[];
+      final dir = Directory(directory);
+      
+      if (!await dir.exists()) {
+        return results;
+      }
+
+      final stream = dir.list(recursive: recursive);
+      
+      await for (final entity in stream) {
+        if (entity is File) {
+          final fileName = path.basename(entity.path);
+          
+          // 检查文件名模式匹配
+          if (_matchesPattern(fileName, filePattern)) {
+            if (searchType == 'filename') {
+              // 文件名搜索
+              if (_matchesSearchPattern(fileName, searchPattern, caseSensitive, matchWholeWord, useRegex)) {
+                results.add({
+                  'path': entity.path,
+                  'name': fileName,
+                  'type': 'file',
+                  'matches': [{'line': 0, 'content': fileName}],
+                });
+              }
+            } else {
+              // 文件内容搜索
+              try {
+                final content = await entity.readAsString();
+                final lines = content.split('\n');
+                final matches = <Map<String, dynamic>>[];
+                
+                for (int i = 0; i < lines.length; i++) {
+                  final line = lines[i];
+                  if (_matchesSearchPattern(line, searchPattern, caseSensitive, matchWholeWord, useRegex)) {
+                    matches.add({
+                      'line': i + 1,
+                      'content': line.trim(),
+                    });
+                  }
+                }
+                
+                if (matches.isNotEmpty) {
+                  results.add({
+                    'path': entity.path,
+                    'name': fileName,
+                    'type': 'file',
+                    'matches': matches,
+                  });
+                }
+              } catch (e) {
+                // 跳过无法读取的文件
+                continue;
+              }
+            }
+          }
+        }
+      }
+      
+      return results;
+    } catch (e) {
+      throw Exception('Failed to search files: $e');
+    }
+  }
+
+  static bool _matchesPattern(String fileName, String pattern) {
+    if (pattern == '*' || pattern.isEmpty) return true;
+    
+    final regexPattern = pattern
+        .replaceAll('.', '\\.')
+        .replaceAll('*', '.*')
+        .replaceAll('?', '.');
+    
+    final regex = RegExp(regexPattern, caseSensitive: false);
+    return regex.hasMatch(fileName);
+  }
+
+  static bool _matchesSearchPattern(
+    String text,
+    String pattern,
+    bool caseSensitive,
+    bool matchWholeWord,
+    bool useRegex,
+  ) {
+    if (pattern.isEmpty) return false;
+    
+    if (useRegex) {
+      try {
+        final regex = RegExp(pattern, caseSensitive: caseSensitive);
+        return regex.hasMatch(text);
+      } catch (e) {
+        return text.contains(pattern);
+      }
+    }
+    
+    if (matchWholeWord) {
+      final regexPattern = r'\b' + RegExp.escape(pattern) + r'\b';
+      final regex = RegExp(regexPattern, caseSensitive: caseSensitive);
+      return regex.hasMatch(text);
+    }
+    
+    return caseSensitive 
+        ? text.contains(pattern)
+        : text.toLowerCase().contains(pattern.toLowerCase());
+  }
 }

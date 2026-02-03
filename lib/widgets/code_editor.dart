@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:code_text_field/code_text_field.dart';
 import '../providers/app_state_provider.dart';
-import '../services/syntax_service.dart';
+import '../services/enhanced_syntax_service.dart';
 import '../services/file_service.dart';
 import '../services/format_service.dart';
 import '../models/editor_state.dart';
@@ -181,7 +181,7 @@ class _CodeEditorState extends State<CodeEditor> {
     final editorState = appState.currentEditorState;
 
     if (editorState != null && _codeController.text.isNotEmpty) {
-      final language = SyntaxService.getLanguageFromFileName(
+      final language = EnhancedSyntaxService.getLanguageFromFileName(
         editorState.fileName,
       );
       final issues = FormatService.checkFormatIssues(
@@ -228,10 +228,19 @@ class _CodeEditorState extends State<CodeEditor> {
       try {
         final content = await FileService.readFile(editorState.filePath);
 
+        // 获取文件扩展名并确定语言
+        final extension = editorState.filePath.split('.').last.toLowerCase();
+        final language = EnhancedSyntaxService.getLanguageFromExtension(
+          '.$extension',
+        );
+
         if (mounted) {
           setState(() {
             _codeController.dispose(); // 释放旧的控制器
-            _codeController = CodeController(text: content);
+            _codeController = EnhancedSyntaxService.createCodeController(
+              text: content,
+              language: language,
+            );
             _isModified = false;
           });
 
@@ -343,7 +352,7 @@ class _CodeEditorState extends State<CodeEditor> {
         if (_showFormatIssues && _formatIssues.isNotEmpty)
           Container(
             height: 120,
-            color: Colors.orange.withOpacity(0.1),
+            color: Colors.orange.withValues(alpha: 0.1),
             padding: const EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,54 +431,6 @@ class _CodeEditorState extends State<CodeEditor> {
     );
   }
 
-  Widget _buildEditor() {
-    return Column(
-      children: [
-        // 状态栏
-        Container(
-          height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          child: Row(
-            children: [
-              Text(
-                '行: ${_codeController.selection.base.offset}',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(width: 16),
-              Text(
-                '列: ${_codeController.selection.extent.offset}',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const Spacer(),
-              if (_isModified)
-                Text(
-                  '已修改',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.orange),
-                ),
-            ],
-          ),
-        ),
-
-        // 代码编辑器
-        Expanded(
-          child: CodeField(
-            controller: _codeController,
-            textStyle: const TextStyle(fontFamily: 'monospace', fontSize: 14),
-            lineNumberStyle: const LineNumberStyle(
-              margin: 8,
-              textStyle: TextStyle(fontFamily: 'monospace'),
-            ),
-            expands: true,
-            wrap: false,
-          ),
-        ),
-      ],
-    );
-  }
-
   void _showFindDialog() {
     showDialog(
       context: context,
@@ -508,7 +469,7 @@ class _CodeEditorState extends State<CodeEditor> {
 
     if (editorState != null && _codeController.text.isNotEmpty) {
       try {
-        final language = SyntaxService.getLanguageFromFileName(
+        final language = EnhancedSyntaxService.getLanguageFromFileName(
           editorState.fileName,
         );
         final formattedCode = FormatService.formatCode(

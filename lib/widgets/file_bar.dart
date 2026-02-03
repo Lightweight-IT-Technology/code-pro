@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state_provider.dart';
-import '../models/file_model.dart';
 import '../models/simple_file_tree_model.dart';
 import '../models/editor_state.dart';
 import '../services/file_service.dart';

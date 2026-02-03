@@ -96,7 +96,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
     return Container(
       width: 200,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         border: Border(
           right: BorderSide(color: Theme.of(context).dividerColor),
         ),
@@ -121,7 +123,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
         icon,
         color: isSelected
             ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       ),
       title: Text(
         title,
@@ -134,7 +136,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       ),
       onTap: () => setState(() => _currentPageIndex = index),
       tileColor: isSelected
-          ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
           : Colors.transparent,
     );
   }
@@ -171,7 +173,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
               size: 20,
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 4),
             Text(
@@ -180,7 +184,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 fontSize: 12,
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -312,7 +318,7 @@ class _AppearanceSettingsPage extends StatelessWidget {
         icon,
         color: isSelected
             ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       ),
       title: Text(title),
       trailing: isSelected
@@ -341,8 +347,7 @@ class _AppearanceSettingsPage extends StatelessWidget {
       spacing: 12,
       runSpacing: 12,
       children: colors.map((color) {
-        final isSelected =
-            settingsProvider.settings.primaryColor.value == color.value;
+        final isSelected = settingsProvider.settings.primaryColor == color;
 
         return GestureDetector(
           onTap: () => settingsProvider.setPrimaryColor(color),
@@ -357,7 +362,7 @@ class _AppearanceSettingsPage extends StatelessWidget {
                   : null,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -398,7 +403,7 @@ class _AppearanceSettingsPage extends StatelessWidget {
           divisions: 14,
           label: '${settingsProvider.settings.fontSize.toInt()}px',
           onChanged: (value) => settingsProvider.setFontSize(value),
-          activeColor: Theme.of(context).colorScheme.primary,
+          thumbColor: Theme.of(context).colorScheme.primary,
         ),
       ],
     );
@@ -460,7 +465,7 @@ class _EditorSettingsPage extends StatelessWidget {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: Theme.of(context).colorScheme.primary,
+        activeTrackColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -505,7 +510,7 @@ class _AboutPage extends StatelessWidget {
                     fontSize: 14,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.7),
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -533,7 +538,7 @@ class _AboutPage extends StatelessWidget {
                           fontSize: 12,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.7),
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -543,7 +548,7 @@ class _AboutPage extends StatelessWidget {
                           fontSize: 12,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.7),
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
 import '../providers/app_state_provider.dart';
 import '../services/extension_manager.dart';
 
@@ -27,8 +26,6 @@ class _EnhancedExtensionBarState extends State<EnhancedExtensionBar> {
   List<String> _searchSuggestions = [];
   List<String> _filteredExtensions = [];
   bool _showSearchResults = false;
-  bool _isUploading = false;
-  double _uploadProgress = 0.0;
 
   // 获取已安装的拓展列表
   List<Extension> get _installedExtensions =>
@@ -103,59 +100,6 @@ class _EnhancedExtensionBarState extends State<EnhancedExtensionBar> {
     });
   }
 
-  Future<void> _uploadExtension() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pkg-code'],
-        allowMultiple: false,
-      );
-
-      if (result != null && result.files.single.extension == 'pkg-code') {
-        setState(() {
-          _isUploading = true;
-          _uploadProgress = 0.0;
-        });
-
-        // 模拟上传过程
-        for (int i = 0; i <= 100; i += 10) {
-          await Future.delayed(const Duration(milliseconds: 200));
-          setState(() {
-            _uploadProgress = i / 100.0;
-          });
-        }
-
-        // 模拟文件验证和安装
-        await Future.delayed(const Duration(milliseconds: 500));
-
-        setState(() {
-          _isUploading = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('拓展包 ${result.files.single.name} 安装成功！'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('请选择有效的 .pkg-code 文件'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _isUploading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('上传失败: $e'), backgroundColor: Colors.red),
-      );
-    }
-  }
-
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -224,23 +168,6 @@ class _EnhancedExtensionBarState extends State<EnhancedExtensionBar> {
   Widget _buildActionButtons() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: _uploadExtension,
-              icon: const Icon(Icons.upload, size: 16),
-              label: const Text('上传拓展'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                foregroundColor: Theme.of(
-                  context,
-                ).colorScheme.onPrimaryContainer,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -366,30 +293,6 @@ class _EnhancedExtensionBarState extends State<EnhancedExtensionBar> {
     );
   }
 
-  Widget _buildUploadProgress() {
-    if (!_isUploading) return const SizedBox.shrink();
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          LinearProgressIndicator(
-            value: _uploadProgress,
-            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '上传中... ${(_uploadProgress * 100).toStringAsFixed(0)}%',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -444,12 +347,6 @@ class _EnhancedExtensionBarState extends State<EnhancedExtensionBar> {
 
           // 搜索栏
           _buildSearchBar(),
-
-          // 操作按钮
-          _buildActionButtons(),
-
-          // 上传进度
-          _buildUploadProgress(),
 
           // 拓展列表
           _buildExtensionList(),

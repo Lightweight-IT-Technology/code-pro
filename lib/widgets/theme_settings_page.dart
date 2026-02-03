@@ -90,7 +90,7 @@ class ThemeSettingsPage extends StatelessWidget {
         icon,
         color: isSelected
             ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       ),
       title: Text(title),
       subtitle: Text(subtitle),
@@ -130,7 +130,7 @@ class ThemeSettingsPage extends StatelessWidget {
             runSpacing: 12,
             children: colors.map((color) {
               final isSelected =
-                  settingsProvider.settings.primaryColor.value == color.value;
+                  settingsProvider.settings.primaryColor == color;
 
               return GestureDetector(
                 onTap: () => settingsProvider.setPrimaryColor(color),
@@ -145,7 +145,7 @@ class ThemeSettingsPage extends StatelessWidget {
                         : null,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -186,7 +186,7 @@ class ThemeSettingsPage extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                '当前主题色: RGB(${settingsProvider.settings.primaryColor.red}, ${settingsProvider.settings.primaryColor.green}, ${settingsProvider.settings.primaryColor.blue})',
+                '当前主题色: RGB(${(settingsProvider.settings.primaryColor.red * 255.0).round().clamp(0, 255)}, ${(settingsProvider.settings.primaryColor.green * 255.0).round().clamp(0, 255)}, ${(settingsProvider.settings.primaryColor.blue * 255.0).round().clamp(0, 255)})',
                 style: TextStyle(
                   color:
                       settingsProvider.settings.primaryColor
